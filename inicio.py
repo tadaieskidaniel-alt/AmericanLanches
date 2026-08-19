@@ -33,7 +33,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    df = pd.read_excel("Cardapio.csv")  # ou read_csv
+    df = pd.read_excel("Cardapio.xlsx")  # ou read_csv
     precos = dict(zip(df["item"], df["preco"]))
     return render_template("inicio.html", precos=precos)
 
