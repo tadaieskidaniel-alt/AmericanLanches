@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
+from openpyxl import load_workbook
 
 
 
@@ -18,7 +19,7 @@ import pandas as pd
 
 
 
-df = pd.read_excel("cardapio.csv") 
+df = pd.read_excel("cardapio.xlsx") 
 
 
 precos = dict(zip(df["item"], df["preco"]))
