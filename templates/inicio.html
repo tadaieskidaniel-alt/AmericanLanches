@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>   
+    <title>America Lanches</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+<body>
+    <div class="logo">
+    <h1><img src="static/logo.png" alt="America Lanches"></h1>
+    </div>
+        <div class="apresentacao">
+    <h2>Seja bem-vindo ao American Lanches</h2>
+    <div class="horario">
+    <title>Horario de Funcionamento:</title>
+    <p>Sexta a Domingo: 18:00 - 22:00</p>
+    </div>
+    <div id="status">verificando...</div>
+    <h2>Cardápio</h2>
+
+    <form action="/finalizar" method="post">
+    <div id="Categoria">
+        <h3>Lanches Salgados</h3>
+    </div>
+        
+    
+        <div class="item">
+            Big-American (X da casa): R${{ precos["Big-American (X da casa)"] }}
+            <input type="number" name="quantidade_BigAmerican" value="0" min="0"
+                   data-preco="{{ precos['Big-American (X da casa)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Salada: R${{ precos["X-Salada"] }}  
+            <input type="number" name="quantidade_X-Salada" value="0" min="0"
+                   data-preco="{{ precos['X-Salada'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Bacon: R${{ precos["X-Bacon"] }}
+            <input type="number" name="quantidade_X-Bacon" value="0" min="0"
+                   data-preco="{{ precos['X-Bacon'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Calabresa: R${{ precos["X-Calabresa"] }}
+            <input type="number" name="quantidade_X-Calabresa" value="0" min="0"
+                   data-preco="{{ precos['X-Calabresa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Frango: R${{ precos["X-Frango"] }}
+            <input type="number" name="quantidade_X-Frango" value="0" min="0"
+                   data-preco="{{ precos['X-Frango'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Coração: R${{ precos["X-Coração"] }}
+            <input type="number" name="quantidade_X-Coração" value="0" min="0"
+                   data-preco="{{ precos['X-Coração'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+        
+        <div class="item">
+            X-Egg Bacon: R${{ precos["X-Egg Bacon"] }}
+            <input type="number" name="quantidade_X-Egg Bacon" value="0" min="0"
+                   data-preco="{{ precos['X-Egg Bacon'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>  
+        </div>
+        
+        <div class="item">
+            X-Egg : R${{ precos["X-Egg"] }}
+            <input type="number" name="quantidade_X-Egg" value="0" min="0"
+                   data-preco="{{ precos['X-Egg'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Burguer: R${{ precos["X-Burguer"] }}
+            <input type="number" name="quantidade_X-Burguer" value="0" min="0"
+                   data-preco="{{ precos['X-Burguer'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Misto Quente: R${{ precos["Misto Quente"] }}
+            <input type="number" name="quantidade_Misto Quente" value="0" min="0"
+                   data-preco="{{ precos['Misto Quente'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+           Misto com Calabresa: R${{ precos["Misto com Calabresa"] }}
+            <input type="number" name="quantidade_Misto com Calabresa" value="0" min="0"
+                   data-preco="{{ precos['Misto com Calabresa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+           Cachorro Quente: R${{ precos["Cachorro Quente"] }}
+            <input type="number" name="quantidade_Cachorro Quente" value="0" min="0"
+                   data-preco="{{ precos['Cachorro Quente'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+    
+    
+        <div id="Categoria">
+           <h3>Lanches Doces</h3>
+        </div>
+
+        <div class="item">
+            X-Sensação: R${{ precos["X-Sensação"] }}
+            <input type="number" name="quantidade_X-Sensação" value="0" min="0"
+                   data-preco="{{ precos['X-Sensação'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Charge: R${{ precos["X-Charge"] }}
+            <input type="number" name="quantidade_X-Charge" value="0" min="0"
+                   data-preco="{{ precos['X-Charge'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+          X-Confete: R${{ precos["X-Confete"] }}
+            <input type="number" name="quantidade_X-Confete" value="0" min="0"
+                   data-preco="{{ precos['X-Confete'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+       
+        <div id="Categoria">
+           <h3>Porções</h3>
+        </div>
+         
+        <div class="item">
+         Batata Frita: R${{ precos["Batata Frita"] }}
+            <input type="number" name="quantidade_Batata Frita" value="0" min="0"
+                   data-preco="{{ precos['Batata Frita'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+         Batata Frita c/ Cheddar e Bacon: R${{ precos["Batata Frita c/ Cheddar e Bacon"] }}
+            <input type="number" name="quantidade_Batata Frita c/ Cheddar e Bacon" value="0" min="0"
+                   data-preco="{{ precos['Batata Frita c/ Cheddar e Bacon'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+         Batata Frita c/ Cheddar e Calabresa: R${{ precos["Batata Frita c/ Cheddar e Calabresa"] }}
+            <input type="number" name="quantidade_Batata Frita c/ Cheddar e Calabresa" value="0" min="0"
+                   data-preco="{{ precos['Batata Frita c/ Cheddar e Calabresa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>  
+
+        <div class="item">
+         Batata Frita c/ Queijo e Orégano: R${{ precos["Batata Frita c/ Queijo e Orégano"] }}
+            <input type="number" name="quantidade_Batata Frita c/ Queijo e Orégano" value="0" min="0"
+                   data-preco="{{ precos['Batata Frita c/ Queijo e Orégano'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+         Coração + Pão, Maionese e Queijo: R${{ precos["Coração + Pão, Maionese e Queijo"] }}
+            <input type="number" name="quantidade_Coração + Pão, Maionese e Queijo" value="0" min="0"
+                   data-preco="{{ precos['Coração + Pão, Maionese e Queijo'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Filézinho de Frango: R${{ precos["Filézinho de Frango"] }}
+            <input type="number" name="quantidade_Filézinho de Frango" value="0" min="0"
+                   data-preco="{{ precos['Filézinho de Frango'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Anel de Cebola: R${{ precos["Anel de Cebola"] }}
+            <input type="number" name="quantidade_Anel de Cebola" value="0" min="0"
+                   data-preco="{{ precos['Anel de Cebola'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Hambúrguer, Presunto e Queijo: R${{ precos["Hambúrguer, Presunto e Queijo"] }}
+            <input type="number" name="quantidade_Hambúrguer, Presunto e Queijo" value="0" min="0"
+                   data-preco="{{ precos['Hambúrguer, Presunto e Queijo'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+        
+        <div id="Categoria">
+            <h3>Tábuas</h3>
+           
+        </div>
+
+        <div class="item">
+            Tábua G (4 pessoas): R${{ precos["Tábua G (4 pessoas)"] }}
+            <input type="number" name="quantidade_Tábua G (4 pessoas)" value="0" min="0"
+                   data-preco="{{ precos['Tábua G (4 pessoas)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Tábua M (2 pessoas): R${{ precos["Tábua M (2 pessoas)"] }}
+            <input type="number" name="quantidade_Tábua M (2 pessoas)" value="0" min="0"
+                   data-preco="{{ precos['Tábua M (2 pessoas)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            X-Família (4 pessoas): R${{ precos["X-Família (4 pessoas)"] }}
+            <input type="number" name="quantidade_X-Família (4 pessoas)" value="0" min="0"
+                   data-preco="{{ precos['X-Família (4 pessoas)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+        
+        <div id="Categoria">    
+            <h3>Bebidas</h3>
+        </div>
+
+        <div class="item">
+            Coca Cola (2 Litros): R${{ precos["Coca Cola (2 Litros)"] }}
+            <input type="number" name="quantidade_Coca Cola (2 Litros)" value="0" min="0"
+                   data-preco="{{ precos['Coca Cola (2 Litros)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Pepsi 2 (2 Litros): R${{ precos["Pepsi 2 (2 Litros)"] }}
+            <input type="number" name="quantidade_Pepsi 2 (2 Litros)" value="0" min="0"
+                   data-preco="{{ precos['Pepsi 2 (2 Litros)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Guaraná (2 Litros): R${{ precos["Guaraná (2 Litros)"] }}
+            <input type="number" name="quantidade_Guaraná (2 Litros)" value="0" min="0"
+                   data-preco="{{ precos['Guaraná (2 Litros)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div> 
+        
+        <div class="item">
+            Sukita Uva/Laranja (2 Litros): R${{ precos["Sukita Uva/Laranja (2 Litros)"] }}
+            <input type="number" name="quantidade_Sukita Uva/Laranja (2 Litros)" value="0" min="0"
+                   data-preco="{{ precos['Sukita Uva/Laranja (2 Litros)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Sprite Limão (2 Litros): R${{ precos["Sprite Limão (2 Litros)"] }}
+            <input type="number" name="quantidade_Sprite Limão (2 Litros)" value="0" min="0"
+                   data-preco="{{ precos['Sprite Limão (2 Litros)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Coca Cola (600 ml): R${{ precos["Coca Cola (600 ml)"] }}
+            <input type="number" name="quantidade_Coca Cola (600 ml)" value="0" min="0"
+                   data-preco="{{ precos['Coca Cola (600 ml)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Guaraná (600 ml): R${{ precos["Guaraná (600 ml)"] }}
+            <input type="number" name="quantidade_Guaraná (600 ml)" value="0" min="0"
+                   data-preco="{{ precos['Guaraná (600 ml)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Energético Monster (Latão): R${{ precos["Energético Monster (Latão)"] }}
+            <input type="number" name="quantidade_Energético Monster (Latão)" value="0" min="0"
+                   data-preco="{{ precos['Energético Monster (Latão)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Água com gás/sem gás: R${{ precos["Água com gás/sem gás"] }}
+            <input type="number" name="quantidade_Água com gás/sem gás" value="0" min="0"
+                   data-preco="{{ precos['Água com gás/sem gás'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Coca Cola (Lata): R${{ precos["Coca Cola (Lata)"] }}
+            <input type="number" name="quantidade_Coca Cola (Lata)" value="0" min="0"
+                   data-preco="{{ precos['Coca Cola (Lata)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Guaraná (Lata): R${{ precos["Guaraná (Lata)"] }}
+            <input type="number" name="quantidade_Guaraná (Lata)" value="0" min="0"
+                   data-preco="{{ precos['Guaraná (Lata)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Suco lata (uva, pêssego, maracujá, manga, goiaba): R${{ precos["Suco lata (uva, pêssego, maracujá, manga, goiaba)"] }}
+            <input type="number" name="quantidade_Suco lata (uva, pêssego, maracujá, manga, goiaba)" value="0" min="0"
+                   data-preco="{{ precos['Suco lata (uva, pêssego, maracujá, manga, goiaba)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+        
+        <div id=Categoria>
+            <h3>Bebidas Alcoolicas</h3>
+        </div>
+
+        <div class="item">
+            Brahma Garrafa: R${{ precos["Brahma Garrafa"] }}
+            <input type="number" name="quantidade_Brahma Garrafa" value="0" min="0"
+                   data-preco="{{ precos['Brahma Garrafa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Antarctica Garrafa: R${{ precos["Antarctica Garrafa"] }}
+            <input type="number" name="quantidade_Antarctica Garrafa" value="0" min="0"
+                   data-preco="{{ precos['Antarctica Garrafa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+
+        <div class="item">
+        Chopp Pilsen (500 ml): R${{ precos["Chopp Pilsen (500 ml)"] }}
+            <input type="number" name="quantidade_Chopp Pilsen (500 ml)" value="0" min="0"
+                   data-preco="{{ precos['Chopp Pilsen (500 ml)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Brahma (Lata): R${{ precos["Brahma (Lata)"] }}
+            <input type="number" name="quantidade_Brahma (Lata)" value="0" min="0"
+                   data-preco="{{ precos['Brahma (Lata)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+
+        <div class="item">
+            Antarctica (Lata): R${{ precos["Antarctica (Lata)"] }}
+            <input type="number" name="quantidade_Antarctica (Lata)" value="0" min="0"
+                   data-preco="{{ precos['Antarctica (Lata)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Schin (Lata): R${{ precos["Schin (Lata)"] }}
+            <input type="number" name="quantidade_Schin (Lata)" value="0" min="0"
+                   data-preco="{{ precos['Schin (Lata)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Red Label (Dose): R${{ precos["Red Label (Dose)"] }}
+            <input type="number" name="quantidade_Red Label (Dose)" value="0" min="0"
+                   data-preco="{{ precos['Red Label (Dose)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Dreher (Dose): R${{ precos["Dreher (Dose)"] }}
+            <input type="number" name="quantidade_Dreher (Dose)" value="0" min="0"
+                   data-preco="{{ precos['Dreher (Dose)'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div id="Adicionais">
+            <h3>Adicionais</h3>
+        </div>
+
+        <div class="item">
+            Calabresa: R${{ precos["Calabresa"] }}
+            <input type="number" name="quantidade_Calabresa" value="0" min="0"
+                   data-preco="{{ precos['Calabresa'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Bacon: R${{ precos["Bacon"] }}
+            <input type="number" name="quantidade_Bacon" value="0" min="0"
+                   data-preco="{{ precos['Bacon'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Hambúrguer Extra: R${{ precos["Hambúrguer Extra"] }}
+            <input type="number" name="quantidade_Hambúrguer Extra" value="0" min="0"
+                   data-preco="{{ precos['Hambúrguer Extra'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">    
+            Frango: R${{ precos["Frango"] }}
+            <input type="number" name="quantidade_Frango" value="0" min="0"
+                   data-preco="{{ precos['Frango'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">    
+            Anel de Cebola: R${{ precos["Anel de Cebola"] }}
+            <input type="number" name="quantidade_Anel de Cebola" value="0" min="0"
+                   data-preco="{{ precos['Anel de Cebola'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">    
+            Picles: R${{ precos["Picles"] }}
+            <input type="number" name="quantidade_Picles" value="0" min="0"
+                   data-preco="{{ precos['Picles'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>  
+         
+        <div class="item">    
+            Batata Frita Extra: R${{ precos["Batata Frita Extra"] }}
+            <input type="number" name="quantidade_Batata Frita Extra" value="0" min="0"
+                   data-preco="{{ precos['Batata Frita Extra'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+        
+        <div class="item">
+            Ovinho Conserva: R${{ precos["Ovinho Conserva"] }}
+            <input type="number" name="quantidade_Ovinho Conserva" value="0" min="0"
+                   data-preco="{{ precos['Ovinho Conserva'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Acebolado: R${{ precos["Acebolado"] }}
+            <input type="number" name="quantidade_Acebolado" value="0" min="0"
+                   data-preco="{{ precos['Acebolado'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Cheddar: R${{ precos["Cheddar"] }}
+            <input type="number" name="quantidade_Cheddar" value="0" min="0"
+                   data-preco="{{ precos['Cheddar'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>  
+        </div>
+        
+        <div class="item">
+            Coração: R${{ precos["Coração"] }}
+            <input type="number" name="quantidade_Coração" value="0" min="0"
+                   data-preco="{{ precos['Coração'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="item">
+            Maionese caseira: R${{ precos["Maionese caseira"] }}
+            <input type="number" name="quantidade_Maionese caseira" value="0" min="0"
+                   data-preco="{{ precos['Maionese caseira'] }}" class="quantidade",required>
+            <span class="item-total">Total: R$0</span>
+        </div>
+
+        <div class="cadastro">
+       <label for="nome">Nome:</label>
+       <input type="text" name="nome" id="nome"required>
+        <label for="pagamento">Forma de pagamento:</label>
+        <select name="pagamento" id="pagamento">
+            <option value="dinheiro">Dinheiro</option>
+            <option value="cartao">Cartão</option>
+            <option value="pix">Pix</option>
+        </select>    
+        </div>
+
+    
+        
+         
+        <label for="bairro">Selecione o bairro:</label>
+        <select name="bairro" id="bairro" required>
+        <option value="Retirar no local">Retirar no local (sem taxa)</option>
+        <option value="Rio América">Rio América - R$2,00</option>
+        <option value="Centro">Centro - R$7,00</option>
+        <option value="Belvedere">Belvedere - R$8,00</option>
+        <option value="São Donato">São Donato - R$12,00</option>
+        <option value="Coxia Rica">Coxia Rica - R$12,00</option>
+        <option value="Santana">Santana - R$10,00</option>
+        <option value="Rio Salto">Rio Salto - R$5,00</option>
+        <option value="Pirago">Pirago - R$6,00</option>
+        <option value="Rio Caeté">Rio Caeté - R$7,00</option>
+        <option value="Rio Deserto">Rio Deserto - R$8,00</option>
+        <option value="Estação">Estação - R$8,00</option>
+        <option value="De Vila">De Vila - R$10,00</option>
+        <option value="São Pedro">São Pedro - R$12,00</option>
+        <option value="Nova Itália">Nova Itália - R$8,00</option>
+        <option value="Rio Carvão">Rio Carvão - R$8,00</option>
+        <option value="Rio Carvão Baixo">Rio Carvão Baixo - R$10,00</option>
+        <option value="Outro">Outro (Informe o bairro pelo whats)</option>
+    </select>
+        <div class= Pagamento>
+        <label for="complemento">Complemento:</label>
+        <input type="text" name="complemento" id="complemento">
+        <label for="cidade"value="Urussanga">Cidade:</label>
+        <input type="text" name="cidade" id="cidade"value="Urussanga",required>
+        <label for="telefone">Telefone:</label>
+        <input type="tel" name="telefone" id="telefone" placeholder="Digite seu telefone",required>
+        </div>
+        <div id="total">Carrinho:R$0</div>
+
+        <!-- Campo oculto para enviar o total -->
+        <input type="hidden" name="total" id="total_input">
+
+        <button type="submit">Finalizar pedido</button>
+    
+
+    <script>
+      function atualizarTotais() {
+    let totalGeral = 0;
+    document.querySelectorAll(".quantidade").forEach(input => {
+        const preco = parseFloat((input.dataset.preco || "0").replace(",", "."));
+        const quantidade = parseInt(input.value) || 0;
+        const subtotal = preco * quantidade;
+        input.nextElementSibling.textContent = "Total: R$" + subtotal.toFixed(2);
+        totalGeral += subtotal;
+    });
+
+    // Atualiza o carrinho e o campo oculto
+    document.getElementById("total").textContent = "Carrinho: R$" + totalGeral.toFixed(2);
+    document.getElementById("total_input").value = totalGeral.toFixed(2);
+}
+
+// Executa ao mudar quantidade
+document.querySelectorAll(".quantidade").forEach(input => {
+    input.addEventListener("input", atualizarTotais);
+});
+
+    </script>
+
+    <script>
+    function verificarStatus() {
+        const agora = new Date();
+        const diaSemana = agora.getDay(); // 0=Domingo, 1=Segunda, ..., 6=Sábado
+        const hora = agora.getHours();
+
+        const statusDiv = document.getElementById("status");
+
+        // Aberto: sexta (5), sábado (6) e domingo (0) das 18h às 22h
+        if ((diaSemana === 5 || diaSemana === 6 || diaSemana === 0) && (hora >= 18 && hora < 22)) {
+            statusDiv.textContent = "Aberto";
+            statusDiv.className = "aberto";
+        } else {
+            statusDiv.textContent = "Fechado";
+            statusDiv.className = "fechado";
+        }
+    }
+
+    verificarStatus();
+    // Atualiza a cada minuto
+    setInterval(verificarStatus, 60000);
+</script>
+
+</form>    
+</body>
+</html>
+<footer class="rodape">
+        <p>Instagram: @americanlanchesfastfood</p>
+        <p>Telefone: +55 (48) 9659-8873 </p>
+        <p>Endereço: Av. São Gerônimo, 68 - Rio América, Urussanga - SC, 88840-000</p>
+    </footer>
+
+<style>
+
+    .horario {
+        text-align: center;
+        margin-top: 20px;
+    }
+    #status {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 8px;
+        width: 200px;
+        margin: 10px auto;
+    }
+    .aberto {
+        background-color: #28a745; /* verde */
+        color: white;
+    }
+    .fechado {
+        background-color: #dc3545; /* vermelho */
+        color: white;
+    }
+
+    .cadastro {
+        
+        text-align: center;
+        margin: auto;
+        panding: 1px;
+    }
+    .Pagamento {
+        max-width: 700px;
+        margin: auto;
+        background-color: #e6e6e6;
+        border-radius: 8px;
+        
+        padding: 1px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #Categoria {
+        
+        text-align: center;
+        margin: auto;
+        background-color: #d4c95e;
+       
+        
+    }
+    .apresentacao {
+        max-width: 700px;
+        margin: auto;
+        background-color: #e6e6e6;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #e93535;
+        padding: 1px;
+        text-align: center;
+    }
+    .logo {
+       
+    background-color: #eee6e6;
+        
+        height: auto;
+        margin: auto;
+        padding: 1px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #e93535;
+        max-width: 700px;
+        text-align: center;
+
+    }
+    legend {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 0;
+            background-color: #0c0b0b;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            background: #e6e6e6;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #e93535;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #7f9e37;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #total {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: bold;
+            padding: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #Adicionais
+        {
+            text-align: center;
+            margin: auto;
+            background-color: #d4c95e;
+            border-radius: 8px;
+            
+        }
+    </style>
