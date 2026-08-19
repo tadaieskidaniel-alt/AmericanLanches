@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from openpyxl import load_workbook
-
+from pandas import DataFrame
+import pandas as pd
 
 
 
@@ -12,7 +13,6 @@ app = Flask(__name__)
 
 loja_coords = (-28.511882260275637, -49.367838494165454)
 
-import pandas as pd
  
 
 
@@ -27,7 +27,7 @@ precos = dict(zip(df["item"], df["preco"]))
 
 
 from flask import Flask, render_template
-import pandas as pd
+
 
 app = Flask(__name__)
 
