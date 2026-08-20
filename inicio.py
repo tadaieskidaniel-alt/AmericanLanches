@@ -5,6 +5,7 @@ from geopy.distance import geodesic
 from openpyxl import load_workbook
 from pandas import DataFrame
 import pandas as pd
+import urllib.parse
 
 
 
@@ -35,7 +36,8 @@ app = Flask(__name__)
 def index():
     df = pd.read_excel("Cardapio.xlsx")  # ou read_csv
     precos = dict(zip(df["item"], df["preco"]))
-    return render_template("inicio.html", precos=precos)
+    ingredientes = dict(zip(df["item"], df["ingredientes"])) 
+    return render_template("inicio.html", precos=precos, ingredientes=ingredientes)
 
 
 taxas_entrega = {
@@ -75,6 +77,9 @@ def finalizar():
     cidade = request.form.get("cidade")
     pagamento = request.form.get("pagamento")
 
+
+    total_str = request.form.get("total_input", "0")
+
     try:
         total = float(total_str)
     except ValueError:
@@ -96,9 +101,15 @@ def finalizar():
     mensagem += f"Pagamento: {pagamento}\n"
     mensagem += "\nObrigado pela compra!"
 
-    numero = "48996598873"
-    link_whatsapp = f"https://wa.me/{numero}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
+
+   
+
+    mensagem_link = mensagem.replace("\n", "%0A")  # força quebra de linha sem urllib
+    link_whatsapp = f"https://wa.me/4896598873?text={mensagem_link}"
+
     return redirect(link_whatsapp)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
