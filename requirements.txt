@@ -1,6 +1,10 @@
-flask==3.0.3
+pip>=26.2.1
+setuptools
+wheel
+
+flask==3.0.0
 gunicorn==22.0.0
 geopy==2.4.1
 pandas==2.2.2
+xlrd==2.0.1
 openpyxl==3.1.5
-requests==2.31.0
