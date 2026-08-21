@@ -16,7 +16,7 @@ loja_coords = (-28.511882260275637, -49.367838494165454)
 
 
 
-df = pd.read_excel("cardapio.xlsx") 
+df = pd.read_excel("static/Cardapio.xlsx") 
 
 
 precos = dict(zip(df["item"], df["preco"]))
@@ -30,7 +30,7 @@ app = Flask(__name__)
 import os
 @app.route("/")
 def index():
-    if not os.path.exists("Cardapio.xlsx"):
+    if not os.path.exists("static/Cardapio.xlsx"):
         return "Arquivo Cardapio.xlsx não encontrado", 500
     df = pd.read_excel("Cardapio.xlsx")  # ou read_csv
     precos = dict(zip(df["item"], df["preco"]))
