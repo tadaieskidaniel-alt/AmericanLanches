@@ -32,7 +32,7 @@ import os
 def index():
     if not os.path.exists("static/Cardapio.xlsx"):
         return "Arquivo Cardapio.xlsx não encontrado", 500
-    df = pd.read_excel("Cardapio.xlsx")  # ou read_csv
+    df = pd.read_excel("static/Cardapio.xlsx")  # ou read_csv
     precos = dict(zip(df["item"], df["preco"]))
     ingredientes = dict(zip(df["item"], df["ingredientes"])) 
     return render_template("inicio.html", precos=precos, ingredientes=ingredientes)
