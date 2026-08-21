@@ -8,10 +8,6 @@ import pandas as pd
 import urllib.parse
 
 
-
-
-app = Flask(__name__) 
-
 loja_coords = (-28.511882260275637, -49.367838494165454)
 
  
@@ -31,9 +27,11 @@ from flask import Flask, render_template
 
 
 app = Flask(__name__)
-
+import os
 @app.route("/")
 def index():
+    if not os.path.exists("Cardapio.xlsx"):
+        return "Arquivo Cardapio.xlsx não encontrado", 500
     df = pd.read_excel("Cardapio.xlsx")  # ou read_csv
     precos = dict(zip(df["item"], df["preco"]))
     ingredientes = dict(zip(df["item"], df["ingredientes"])) 
