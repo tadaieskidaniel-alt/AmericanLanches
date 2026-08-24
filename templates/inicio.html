@@ -5,7 +5,10 @@
 <head>   
     <title>America Lanches</title>
     <div class="logo">
-    <h1><img src="static/logo.png" alt="America Lanches"></h1>
+   <img src="static/logomenor.png" alt="Logo">
+
+    
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
 </head>
@@ -19,7 +22,10 @@
     <p>Sexta a Domingo: 18:00 - 22:00</p>
     </div>
     <div id="status">verificando...</div>
+    
+    <div class="cardapio">
     <h2>Cardápio</h2>
+        </div>
 
     <form action="/finalizar" method="post">
     <div id="Categoria">
@@ -559,17 +565,23 @@
         <input type="text" name="cidade" id="cidade"value="Urussanga",required>
         <label for="telefone">Telefone:</label>
         <input type="tel" name="telefone" id="telefone" placeholder="Digite seu telefone",required>
+        <label for=observação>Observação:</label>
+        <input type="text" name="observação" placeholder="Observações" id="observação">
         </div>
         <form method="POST" action="/finalizar">
             
-  
+  <div id="carrinho">
+    <h3> Carrinho</h3>
+    <ul id="lista-carrinho"></ul>
+    <p>Total: R$ <span id="total">0.00</span></p>
+    <button onclick="finalizarPedido()">Finalizar</button>
+</div>
+
 
         <div id="total">Carrinho:R$0</div>
         <input type="hidden" id="total_input" name="total_input" value="0">
       
 
-  <!-- campos de nome, telefone, bairro, complemento, pagamento -->
-  <button type="submit">Finalizar Pedido</button>
  
 
             
@@ -581,7 +593,9 @@
     </div>
 
     <script>
-      function atualizarTotais() {
+        let carrinho = [];
+        let total = 0;
+    function atualizarTotais() {
     let totalGeral = 0;
     document.querySelectorAll(".quantidade").forEach(input => {
         const preco = parseFloat((input.dataset.preco || "0").replace(",", "."));
@@ -591,11 +605,10 @@
         totalGeral += subtotal;
     });
 
-    // Atualiza o carrinho e o campo oculto
-    document.getElementById("total").textContent = "Carrinho: R$" + totalGeral.toFixed(2);
+    // Atualiza carrinho e campo oculto do formulário
+    document.getElementById("total").textContent = totalGeral.toFixed(2);
     document.getElementById("total_input").value = totalGeral.toFixed(2);
 }
-
 // Executa ao mudar quantidade
 document.querySelectorAll(".quantidade").forEach(input => {
     input.addEventListener("input", atualizarTotais);
@@ -705,11 +718,19 @@ document.querySelectorAll(".quantidade").forEach(input => {
         padding: 1px;
         text-align: center;
     }
+
+ 
+
+/* Ajuste para celular */
+@media (max-width: 5000px) {
     .logo {
-       
+        max-width: 5000px; /* menor ainda no celular */
+    }
+}
+
+
         
 
-    }
     legend {
     font-weight: bold;
     font-size: 18px;
@@ -717,14 +738,16 @@ document.querySelectorAll(".quantidade").forEach(input => {
 
         body {
             font-family: Arial, sans-serif;
-            margin: 0px;
+            margin-top: 500px;
             padding: 0px;
             background-color: #0c0b0b;
+            
         }
         form {
             max-width: 400px;
             margin: auto;
-            background-color: #e6e6e6;
+            background-color: #e6e6e6; 
+            
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px #e93535;
@@ -777,4 +800,46 @@ document.querySelectorAll(".quantidade").forEach(input => {
             border-radius: 8px;
             
         }
-    </style>
+ #carrinho {
+    position: fixed;   /* fica fixo na tela */
+    
+    bottom: -10px;      /* mais para baixo da tela */
+    left: 50%;         /* centraliza horizontalmente */
+    transform: translateX(-50%); /* ajusta para o centro exato */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-align: center;
+}
+
+#btn-finalizar {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#btn-finalizar:hover {
+    background: #218838;
+}
+
+.logo {
+    position: absolute;
+    top: 40%;          /* metade da altura da tela */
+    left: 40%;         /* metade da largura da tela */
+    transform: translate(-40%, -60%); /* corrige o alinhamento */
+    width: px;
+    height: auto;
+    
+}
+
+</style>

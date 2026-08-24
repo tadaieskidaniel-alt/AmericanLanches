@@ -1,42 +1,20 @@
 
-from flask import Flask, render_template, request, redirect, url_for, session
-from geopy.geocoders import Nominatim
-from geopy.distance import geodesic
-from openpyxl import load_workbook
-from pandas import DataFrame
+from flask import Flask, render_template, request, redirect
 import pandas as pd
-import urllib.parse
+import os
 
+app = Flask(__name__)
 
 loja_coords = (-28.511882260275637, -49.367838494165454)
 
- 
-
-
-
-
-
-df = pd.read_excel("static/cardapio.xlsx") 
-
-
-precos = dict(zip(df["item"], df["preco"]))
-
-
-
-from flask import Flask, render_template
-
-
-app = Flask(__name__)
-import os
 @app.route("/")
 def index():
     if not os.path.exists("static/cardapio.xlsx"):
         return "Arquivo Cardapio.xlsx não encontrado", 500
-    df = pd.read_excel("static/cardapio.xlsx")  # ou read_csv
+    df = pd.read_excel("static/cardapio.xlsx")
     precos = dict(zip(df["item"], df["preco"]))
-    ingredientes = dict(zip(df["item"], df["ingredientes"])) 
+    ingredientes = dict(zip(df["item"], df["ingredientes"]))
     return render_template("inicio.html", precos=precos, ingredientes=ingredientes)
-
 
 taxas_entrega = {
     "Rio América": 2.00,
@@ -57,26 +35,22 @@ taxas_entrega = {
     "Rio Carvão Baixo": 10.00
 }
 
-
 def calcular_taxa(bairro, total):
-    taxa_entrega = taxas_entrega.get(bairro, 0)  # pega taxa fixa ou 0 se não existir
+    taxa_entrega = taxas_entrega.get(bairro, 0)
     total_final = total + taxa_entrega
     return taxa_entrega, total_final
-
-
 
 @app.route("/finalizar", methods=["POST"])
 def finalizar():
     complemento = request.form.get("complemento")
     bairro = request.form.get("bairro")
-    total_str = request.form.get("total", "0")
+    total_str = request.form.get("total_input", "0")
+
     nome = request.form.get("nome")
     telefone = request.form.get("telefone")
     cidade = request.form.get("cidade")
+    observacão = request.form.get("observação")
     pagamento = request.form.get("pagamento")
-
-
-    total_str = request.form.get("total_input", "0")
 
     try:
         total = float(total_str)
@@ -85,32 +59,31 @@ def finalizar():
 
     taxa_entrega, total_final = calcular_taxa(bairro, total)
 
-    
-
     mensagem = f"Pedido finalizado!\n\n"
     mensagem += f"Nome: {nome}\n"
     mensagem += f"Telefone: {telefone}\n"
     mensagem += f"Bairro: {bairro}, Urussanga, SC\n"
-    mensagem += f"\ncomplemento:{complemento}\n"
+    mensagem += f"Complemento: {complemento}\n"
     mensagem += f"----------------------------\n"
     mensagem += f"Total produtos: R${total:.2f}\n"
     mensagem += f"Taxa de entrega: R${taxa_entrega:.2f}\n"
     mensagem += f"Total final: R${total_final:.2f}\n"
     mensagem += f"Pagamento: {pagamento}\n"
+    mensagem += f'observações: {observacão}\n'
     mensagem += "\nObrigado pela compra!"
 
+    # Converter quebras de linha para %0A
+    mensagem_link = mensagem.replace("\n", "%0A")
 
-   
+    # Número do WhatsApp (formato internacional)
+    numero_whats = "5548999443394"
 
-    mensagem_link = mensagem.replace("\n", "%0A")  # força quebra de linha sem urllib
-    link_whatsapp = f"https://wa.me/4896598873?text={mensagem_link}"
+    # Montar link
+    link = f"https://wa.me/{numero_whats}?text={mensagem_link}"
 
-    return redirect(link_whatsapp)
-
-
+    # Redirecionar para WhatsApp
+    return redirect(link)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-
 
