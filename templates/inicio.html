@@ -575,12 +575,11 @@
     <ul id="lista-carrinho"></ul>
     <p>Total: R$ <span id="total">0.00</span></p>
     <button onclick="finalizarPedido()">Finalizar</button>
+    <input type="hidden" name="total_input" id="total_input" value="0.00">
 </div>
 
 
-        <div id="total">Carrinho:R$0</div>
-        <input type="hidden" id="total_input" name="total_input" value="0">
-      
+       
 
  
 
@@ -741,6 +740,7 @@ document.querySelectorAll(".quantidade").forEach(input => {
             margin-top: 500px;
             padding: 0px;
             background-color: #0c0b0b;
+            margin-bottom: 80px;
             
         }
         form {

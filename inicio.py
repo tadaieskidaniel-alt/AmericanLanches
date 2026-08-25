@@ -44,7 +44,7 @@ def calcular_taxa(bairro, total):
 def finalizar():
     complemento = request.form.get("complemento")
     bairro = request.form.get("bairro")
-    total_str = request.form.get("total_input", "0")
+    total_str = request.form.get("total_input", "0.00")
 
     nome = request.form.get("nome")
     telefone = request.form.get("telefone")
