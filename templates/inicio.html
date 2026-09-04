@@ -21,7 +21,13 @@
     <title>Horario de Funcionamento:</title>
     <p>Sexta a Domingo: 18:00 - 22:00</p>
     </div>
-    <div id="status">verificando...</div>
+    <div id="status" onclick="mostrarSenha()"></div>
+
+<div id="senha" style="display:none; margin-top:10px;">
+    <input type="password" id="senha" placeholder="Digite sua senha">
+    <button onclick="enviarSenha('Aberto')">Abrir</button>
+    <button onclick="enviarSenha('Fechado')">Fechar</button>
+</div>
     
     <div class="cardapio">
     <h2>Cardápio</h2>
@@ -636,6 +642,28 @@ document.querySelectorAll(".quantidade").forEach(input => {
     verificarStatus();
     // Atualiza a cada minuto
     setInterval(verificarStatus, 60000);
+    
+    function mostrarSenha() {
+    document.getElementById("senha").style.display = "block";
+    document.getElementById("status_loja").textContent = "{{ status_loja }}";
+}
+
+function enviarSenha(novoStatus) {
+    const senha = document.getElementById("senha").value;
+    fetch("/validar_senha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha: senha })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.autorizado) {
+            window.location.href = "/alterar_status/";
+        } else {
+            alert("Senha incorreta!");
+        }
+    });
+}
 </script>
 
 </form>    

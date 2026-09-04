@@ -1,11 +1,29 @@
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import pandas as pd
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
 loja_coords = (-28.511882260275637, -49.367838494165454)
+
+senha = "1234"
+
+@app.route("/validar_senha", methods=["POST"])
+def validar_senha():
+    data = request.get_json()
+    if data.get("senha") == senha:
+        return jsonify({"autorizado": True})
+    return jsonify({"autorizado": False})
+
+@app.route("/alterar_status/<novo_status>")
+def alterar_status(novo_status):
+    global status_manual
+    if novo_status in ["Aberto", "Fechado"]:
+        status_manual = novo_status
+    return redirect("/")
+
 
 @app.route("/")
 def index():
@@ -14,7 +32,10 @@ def index():
     df = pd.read_excel("static/cardapio.xlsx")
     precos = dict(zip(df["item"], df["preco"]))
     ingredientes = dict(zip(df["item"], df["ingredientes"]))
-    return render_template("inicio.html", precos=precos, ingredientes=ingredientes)
+    return render_template("inicio.html", precos=precos, ingredientes=ingredientes, )
+    status = status_loja()
+    return render_template("inicio.html", status=status_loja())
+
 
 taxas_entrega = {
     "Rio América": 2.00,
@@ -46,11 +67,15 @@ def finalizar():
     bairro = request.form.get("bairro")
     total_str = request.form.get("total_input", "0.00")
 
+
     nome = request.form.get("nome")
     telefone = request.form.get("telefone")
     cidade = request.form.get("cidade")
     observacão = request.form.get("observação")
     pagamento = request.form.get("pagamento")
+    adicionais= request.form.getlist("adicionais")
+
+    
 
     try:
         total = float(total_str)
@@ -58,13 +83,36 @@ def finalizar():
         total = 0.0
 
     taxa_entrega, total_final = calcular_taxa(bairro, total)
-
+    
     mensagem = f"Pedido finalizado!\n\n"
     mensagem += f"Nome: {nome}\n"
     mensagem += f"Telefone: {telefone}\n"
     mensagem += f"Bairro: {bairro}, Urussanga, SC\n"
     mensagem += f"Complemento: {complemento}\n"
     mensagem += f"----------------------------\n"
+
+    adicionais = [
+        "quantidade_Calabresa", "quantidade_Bacon", "quantidade_Hambúrguer Extra",
+        "quantidade_Frango", "quantidade_Anel de Cebola", "quantidade_Picles",
+        "quantidade_Batata Frita Extra", "quantidade_Ovinho Conserva",
+        "quantidade_Acebolado", "quantidade_Cheddar", "quantidade_Coração",
+        "quantidade_Maionese caseira"
+    ]
+    mensagem += "Itens do pedido:\n"
+    for campo, valor in request.form.items():
+     if campo.startswith("quantidade_") and campo not in adicionais:
+        qtd = int(valor)
+        if qtd > 0:
+            nome_item = campo.replace("quantidade_", "")
+            mensagem += f"- {nome_item} x{qtd}\n"
+
+    mensagem += "\nAdicionais:\n"
+    for campo in adicionais:
+        qtd = int(request.form.get(campo, 0))
+        if qtd > 0:
+         nome_item = campo.replace("quantidade_", "")
+         mensagem += f"- {nome_item} x{qtd}\n"
+
     mensagem += f"Total produtos: R${total:.2f}\n"
     mensagem += f"Taxa de entrega: R${taxa_entrega:.2f}\n"
     mensagem += f"Total final: R${total_final:.2f}\n"
@@ -76,13 +124,15 @@ def finalizar():
     mensagem_link = mensagem.replace("\n", "%0A")
 
     # Número do WhatsApp (formato internacional)
-    numero_whats = "554896598873"
+    numero_whats = "48999443394"
 
     # Montar link
     link = f"https://wa.me/{numero_whats}?text={mensagem_link}"
 
     # Redirecionar para WhatsApp
     return redirect(link)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
