@@ -124,7 +124,7 @@ def finalizar():
     mensagem_link = mensagem.replace("\n", "%0A")
 
     # Número do WhatsApp (formato internacional)
-    numero_whats = "48999443394"
+    numero_whats = "48996598873"
 
     # Montar link
     link = f"https://wa.me/{numero_whats}?text={mensagem_link}"
