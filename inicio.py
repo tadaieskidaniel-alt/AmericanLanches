@@ -151,7 +151,7 @@ status_manual = None  # pode ser "Aberto", "Fechado" ou None (automático)
 def status_loja_automatico():
     hoje = datetime.now().weekday()  # segunda=0 ... domingo=6
     hora = datetime.now().hour
-    if hoje in [4, 5, 6] and (18<= hora < 22):  # sexta, sábado, domingo das 18h às 22h
+    if hoje in [4, 5, 6] and (18 <= hora < 22):  # sexta, sábado, domingo das 18h às 22h
         return "Aberto"
     return "Fechado"
 
@@ -220,11 +220,15 @@ def logout():
 def controle():
     if "usuario" not in session:
         return redirect("/login")
-     # Lê pedidos do Excel
-  
+
+    # decide status atual
+    status_atual = status_manual if status_manual else status_loja_automatico()
+    classe = "status-aberto" if status_atual == "Aberto" else "status-fechado"
+
+    modo = "Manual" if status_manual else "Automático"
 
     return f"""
-         <!DOCTYPE html>
+    <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
@@ -236,61 +240,31 @@ def controle():
                 text-align: center;
                 margin-top: 50px;
             }}
-            h1 {{
-                color: #333;
-            }}
-            h2 {{
-                color: #666;
-            }}
-            a {{
-                color: #007BFF;
-                text-decoration: none;
-            }}
-            a:hover {{
-                text-decoration: underline;
-                }}
-                
-            .status-aberto {{
-                color: green;
-                font-weight: bold;
-                font-size: 24px;
-                }}
-
-            
-            .status-fechado {{
-                color: red;
-                font-weight: bold;
-                font-size: 24px;
-            }}
-            .btn {{
-                display: inline-block;
-                margin: 10px;
-                padding: 10px 20px;
-                text-decoration: none;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }}
+            h1 {{ color: #333; }}
+            h2 {{ color: #666; }}
+            a {{ color: #007BFF; text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            .status-aberto {{ color: green; font-weight: bold; font-size: 24px; }}
+            .status-fechado {{ color: red; font-weight: bold; font-size: 24px; }}
+            .btn {{ display: inline-block; margin: 10px; padding: 10px 20px;
+                   text-decoration: none; color: white; border-radius: 5px; font-weight: bold; }}
             .btn-aberto {{ background-color: green; }}
             .btn-fechado {{ background-color: red; }}
             .btn-auto {{ background-color: orange; }}
             .btn-logout {{ background-color: gray; }}
-            
-           
-             
         </style>
-    <button 
     </head>
     <body>
         <h1>Painel de Controle</h1>
 
-        <h2>Status atual: {status_manual if status_manual else status_loja_automatico()}</h2>
-        <a href='/alterar_status/Aberto'>Abrir Loja</a><br>
-        <a href='/alterar_status/Fechado'>Fechar Loja</a><br>
-        <a href='/alterar_status/auto'>Voltar para automático</a><br>
-        <a href='/logout'>Sair</a>
-        <a href="/pedidos" class="btn btn-auto">Ver Pedidos</a>
+        <h2>Status atual: <span class='{classe}'>{status_atual}</span> ({modo})</h2>
 
+        <a href='/alterar_status/Aberto' class='btn btn-aberto'>Abrir Loja</a>
+        <a href='/alterar_status/Fechado' class='btn btn-fechado'>Fechar Loja</a>
+        <a href='/alterar_status/auto' class='btn btn-auto'>Voltar para automático</a>
+        <br><br>
+        <a href='/pedidos' class='btn btn-auto'>Ver Pedidos</a>
+        <a href='/logout' class='btn btn-logout'>Sair</a>
     </body>
     </html>
     """
