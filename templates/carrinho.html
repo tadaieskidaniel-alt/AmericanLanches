@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrinho</title>
+</head>
+<body>
+    <h1>Seu Carrinho</h1>
+
+    <form method="POST" action="/finalizar">
+
+        <!-- Itens do carrinho + adicionais -->
+        <div id="carrinho">
+            {% if carrinho %}
+                {% for dados in carrinho %}
+                <div class="item-carrinho">
+                    <b>{{ loop.index }}. {{ dados.item }}</b> x{{ dados.quantidade }}<br>
+
+                    {% if dados.adicionais %}
+                        <p>Adicionais já escolhidos: {{ dados.adicionais|join(", ") }}</p>
+                    {% endif %}
+
+                    <p>Adicionais disponíveis:</p>
+                    <div class="adicionais-container">
+                        {% for adicional, preco in adicionais.items() %}
+                            <label>
+                                {{ adicional }} (+R${{ preco|real }})
+                                <input type="number"
+                                       name="adicional_{{ dados.item }}_{{ adicional }}"
+                                       value="0" min="0"
+                                       class="quantidade-adicional"
+                                       data-preco="{{ preco }}">
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <p>Subtotal: R${{ dados.subtotal|real }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Seu carrinho está vazio.</p>
+            {% endif %}
+        </div>
+
+        <!-- Dados do cliente -->
+        <div class="cadastro">
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" required>
+
+            <label for="telefone">Telefone:</label>
+            <input type="tel" name="telefone" id="telefone" required>
+
+            <label for="bairro">Bairro:</label>
+<select name="bairro" id="bairro" required>
+    <option value="Retirar no local" data-taxa="0">Retirar no local (sem taxa)</option>
+    <option value="Rio América" data-taxa="2">Rio América - R$2,00</option>
+    <option value="Centro" data-taxa="7">Centro - R$7,00</option>
+    <option value="Belvedere" data-taxa="8">Belvedere - R$8,00</option>
+    <option value="São Donato" data-taxa="12">São Donato - R$12,00</option>
+    <option value="Coxia Rica" data-taxa="12">Coxia Rica - R$12,00</option>
+    <option value="Santana" data-taxa="10">Santana - R$10,00</option>
+    <option value="Rio Salto" data-taxa="5">Rio Salto - R$5,00</option>
+    <option value="Pirago" data-taxa="6">Pirago - R$6,00</option>
+    <option value="Rio Caeté" data-taxa="7">Rio Caeté - R$7,00</option>
+    <option value="Rio Deserto" data-taxa="8">Rio Deserto - R$8,00</option>
+    <option value="Estação" data-taxa="8">Estação - R$8,00</option>
+    <option value="De Vila" data-taxa="10">De Vila - R$10,00</option>
+    <option value="São Pedro" data-taxa="12">São Pedro - R$12,00</option>
+    <option value="Nova Itália" data-taxa="8">Nova Itália - R$8,00</option>
+    <option value="Rio Carvão" data-taxa="8">Rio Carvão - R$8,00</option>
+    <option value="Rio Carvão Baixo" data-taxa="10">Rio Carvão Baixo - R$10,00</option>
+</select>
+
+            <label for="cidade">Cidade:</label>
+            <input type="text" name="cidade" id="cidade" value="Urussanga" required>
+
+            <label for="complemento">Complemento:</label>
+            <input type="text" name="complemento" id="complemento">
+
+            <label for="pagamento">Forma de pagamento:</label>
+            <select name="pagamento" id="pagamento">
+                <option value="dinheiro">Dinheiro</option>
+                <option value="cartao">Cartão</option>
+                <option value="pix">Pix</option>
+            </select>
+
+            <label for="observacao">Observação:</label>
+            <input type="text" name="observacao" id="observacao">
+        </div>
+            
+        <!-- Total e botão final -->
+        <div class="finalizar-fixo">
+            <h3>Total: R$ <span id="total">{{ total|real }}</span></h3>
+            <button type="submit" id="btn-finalizar">Finalizar Pedido</button>
+        </div>
+    </form>
+
+<script>
+function calcularTotal() {
+    let total = 0;
+
+    // soma subtotais já calculados no backend
+    const carrinho = {{ carrinho | tojson }};
+    carrinho.forEach(dados => {
+        const subtotal = parseFloat(dados.subtotal) || 0;
+        total += subtotal;
+    });
+
+    // soma adicionais
+    document.querySelectorAll(".quantidade-adicional").forEach(input => {
+        const preco = parseFloat(input.dataset.preco) || 0;
+        const qtd = parseInt(input.value) || 0;
+        total += preco * qtd;
+    });
+
+    // pega taxa do bairro selecionado
+    const bairroSelect = document.getElementById("bairro");
+    if (bairroSelect) {
+        const taxa = parseFloat(bairroSelect.options[bairroSelect.selectedIndex].dataset.taxa) || 0;
+        total += taxa;
+    }
+
+    document.getElementById("total").innerText = total.toFixed(2).replace(".", ",");
+}
+
+// recalcula quando muda bairro ou adicionais
+document.getElementById("bairro").addEventListener("change", calcularTotal);
+document.querySelectorAll(".quantidade-adicional").forEach(input => {
+    input.addEventListener("input", calcularTotal);
+});
+
+// inicializa
+calcularTotal();
+</script>
+
+
+
+</body>
+</html>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    padding: 15px;
+    background: #28a745;
+    color: #fff;
+    margin: 0;
+    font-size: 22px;
+}
+
+form {
+    padding: 15px;
+    padding-bottom: 130px;
+}
+
+.item-carrinho {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.item-carrinho b {
+    font-size: 18px;
+    color: #222;
+}
+
+.item-carrinho p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+
+.adicionais-container {
+    text-align: center;   /* centraliza o conteúdo */
+    margin-top: 10px;
+}
+
+.adicionais-container label {
+    display: block;       /* força cada adicional a ficar embaixo do outro */
+    margin: 10px auto;    /* espaçamento entre eles */
+    font-size: 18px;      /* aumenta fonte para celular */
+    font-weight: 500;
+}
+
+.adicionais-container input {
+    width: 70px;          /* campo compacto */
+    text-align: center;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+
+
+.cadastro {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 500px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.cadastro label {
+    display: block;
+    margin-top: 8px;
+    font-size: 15px; /* fonte menor */
+    text-align: left;
+}
+
+.cadastro input, .cadastro select {
+    width: 100%;
+    padding: 10px; /* reduz altura */
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px; /* reduz fonte */
+}
+
+.resumo-pedido {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #28a745;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
+
+.resumo-pedido h2 {
+    margin: 10px 0;
+    font-size: 22px;
+}
+
+.resumo-pedido button {
+    background: #fff;
+    color: #28a745;
+    border: none;
+    padding: 14px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.resumo-pedido button:hover {
+    background: #f1f1f1;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 20px;
+    }
+    .item-carrinho b {
+        font-size: 16px;
+    }
+    .cadastro input, .cadastro select {
+        font-size: 15px;
+    }
+    .resumo-pedido {
+        font-size: 16px;
+    }
+    .resumo-pedido h2 {
+        font-size: 20px;
+    }
+    .resumo-pedido button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+.finalizar-fixo {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #28a745;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    z-index: 999; /* garante que fique acima de outros elementos */
+}
+
+.finalizar-fixo button {
+    background: #fff;
+    color: #28a745;
+    border: none;
+    padding: 16px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    width: 100%;
+    font-weight: bold;
+}
+
+.finalizar-fixo button:hover {
+    background: #f1f1f1;
+}
+
+/* Responsivo para celular */
+@media (max-width: 600px) {
+    .finalizar-fixo button {
+        font-size: 18px;
+        padding: 14px;
+    }
+}  
+</style>
