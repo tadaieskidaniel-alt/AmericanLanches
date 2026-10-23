@@ -3,7 +3,7 @@
 pip>=26.2.1
 setuptools
 wheel
-
+flask_sqlalchemy==3.1.1
 flask==3.0.0
 gunicorn==22.0.0
 geopy==2.4.1

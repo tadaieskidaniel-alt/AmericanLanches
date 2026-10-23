@@ -41,8 +41,8 @@ class Pedido(db.Model):
 # -------------------------------
 with app.app_context():
     db.create_all()
-    if not Usuario.query.filter_by(usuario="dono").first():
-        novo = Usuario(usuario="dono", senha="1234")
+    if not Usuario.query.filter_by(usuario="American.Lc").first():
+        novo = Usuario(usuario="American.Lc", senha="AMRIO")
         db.session.add(novo)
         db.session.commit()
         
