@@ -8,6 +8,7 @@ from openpyxl import Workbook, load_workbook
 import os
 from zoneinfo import ZoneInfo
 app = Flask(__name__)
+
 app.secret_key = "segredo"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///america_lanche.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
