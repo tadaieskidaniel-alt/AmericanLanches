@@ -496,7 +496,20 @@ def pedidos():
     if "usuario" not in session:
         return redirect("/login")
 
-    wb = load_workbook("pedidos.xlsx")
+    arquivo = "pedidos.xlsx"
+
+    # cria o arquivo se não existir
+    if not os.path.exists(arquivo):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Pedidos"
+        ws.append([
+            "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
+            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
+        ])
+        wb.save(arquivo)
+
+    wb = load_workbook(arquivo)
     ws = wb["Pedidos"]
 
     hoje = datetime.now().strftime("%d/%m/%Y")  # só mostra pedidos do dia atual
@@ -540,7 +553,7 @@ def pedidos():
             html += "<tr>"
             for i, cell in enumerate(row):
                 if i == 11:  # coluna Status
-                    status = str(cell)
+                    status = str(cell) if cell else ""
                     if status == "Pronto":
                         html += f"<td style='color:green;font-weight:bold'>{status}</td>"
                     elif status == "Entregue":
@@ -579,11 +592,12 @@ def pedidos():
 
 @app.route("/pedido/<int:linha>/status/<novo_status>")
 def atualizar_status(linha, novo_status):
-    wb = load_workbook("pedidos.xlsx")
+    arquivo = "pedidos.xlsx"
+    wb = load_workbook(arquivo)
     ws = wb["Pedidos"]
     ws.cell(row=linha, column=12, value=novo_status)  # coluna 12 = Status
-    wb.save("pedidos.xlsx")
+    wb.save(arquivo)
     return redirect("/pedidos")
-    
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
