@@ -108,7 +108,6 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
 
     wb.save(arquivo)
 
-
 # carregar planilha
 xls = pd.ExcelFile("static/cardapio.xlsx")
 
@@ -447,35 +446,6 @@ def carrinho():
         total=total
     )
 
-
-@app.route("/adicionar", methods=["POST","GET"])
-def adicionar():
-    nome_item = request.form.get("item")
-    preco_item = float(request.form.get("preco", 0.0))
-    adicionais = request.form.getlist("adicionais")
-
-    if "carrinho" not in session:
-        session["carrinho"] = []
-
-    # procura se item já existe com mesmos adicionais
-    for produto in session["carrinho"]:
-        if produto["item"] == nome_item and produto.get("adicionais", []) == adicionais:
-            produto["quantidade"] += 1
-            produto["subtotal"] = (
-                produto["quantidade"] * produto["preco"]
-                + sum([precos_adicionais.get(a, 0.0) for a in produto["adicionais"]])
-            )
-            break
-    else:
-        # adiciona novo item
-        session["carrinho"].append({
-            "item": nome_item,
-            "preco": preco_item,
-            "quantidade": 1,
-            "adicionais": adicionais,
-            "subtotal": preco_item + sum([precos_adicionais.get(a, 0.0) for a in adicionais])
-        })
-from datetime import datetime
 
 @app.route("/pedidos")
 def pedidos():
