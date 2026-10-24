@@ -488,54 +488,68 @@ def pedidos():
 
     hoje = datetime.now().strftime("%d/%m/%Y")  # só mostra pedidos do dia atual
 
+    # agrupar pedidos por cliente
+    pedidos_por_cliente = {}
+    linha = 2
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        data_hora = str(row[0])
+        if data_hora.startswith(hoje):
+            nome = row[1]
+            telefone = row[2]
+            chave = f"{nome} ({telefone})"
+            if chave not in pedidos_por_cliente:
+                pedidos_por_cliente[chave] = []
+            pedidos_por_cliente[chave].append((linha, row))
+        linha += 1
+
+    # montar HTML
     html = """
     <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
-        <title>Lista de Pedidos</title>
-        <meta http-equiv="refresh" content="10">
+        <title>Pedidos por Cliente</title>
+        <meta http-equiv="refresh" content="5"> <!-- Atualiza sozinho a cada 5s -->
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
-            table { border-collapse: collapse; width: 100%; }
+            h1 { margin-bottom: 20px; }
+            h2 { margin-top: 30px; color: #333; }
+            table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
             th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
             th { background-color: #f2f2f2; }
             tr:nth-child(even) { background-color: #f9f9f9; }
-            h1 { margin-bottom: 20px; }
-            h2 { margin-top: 20px; color: #333; }
             .btn { padding: 4px 8px; margin: 2px; border: none; cursor: pointer; }
             .pronto { background-color: #4CAF50; color: white; }
             .entregue { background-color: #2196F3; color: white; }
+            .imprimir { background-color: orange; color: white; }
+            .limpar { background-color: red; color: white; }
         </style>
+        <script>
+            function imprimirCliente(clienteId) {
+                var conteudo = document.getElementById(clienteId).innerHTML;
+                var janela = window.open('', '', 'width=800,height=600');
+                janela.document.write('<html><head><title>Imprimir</title></head><body>');
+                janela.document.write(conteudo);
+                janela.document.write('</body></html>');
+                janela.document.close();
+                janela.print();
+            }
+        </script>
     </head>
     <body>
-        <h1>Lista de Pedidos (Hoje)</h1>
-        <table>
-            <tr>
-                <th>Data/Hora</th><th>Nome</th><th>Telefone</th><th>Bairro</th><th>Cidade</th>
-                <th>Complemento</th><th>Pagamento</th><th>Observação</th>
-                <th>Itens</th><th>Adicionais</th><th>Total</th><th>Status</th><th>Ações</th>
-            </tr>
+        <h1>Pedidos de Hoje por Cliente</h1>
     """
 
-    linha = 2
-    pedidos_do_dia = []
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        data_hora = str(row[0])
-        if data_hora.startswith(hoje):  # só mostra pedidos do dia
-            pedidos_do_dia.append(row)
+    for cliente, pedidos in pedidos_por_cliente.items():
+        cliente_id = cliente.replace(" ", "_").replace("(", "").replace(")", "")
+        html += f"<div id='{cliente_id}'>"
+        html += f"<h2>{cliente}</h2>"
+        html += "<table><tr><th>Data/Hora</th><th>Bairro</th><th>Cidade</th><th>Complemento</th><th>Pagamento</th><th>Observação</th><th>Itens</th><th>Adicionais</th><th>Total</th><th>Status</th><th>Ações</th></tr>"
+        for linha, pedido in pedidos:
+            data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total, status = pedido
+            cor = "green" if status == "Pronto" else "blue" if status == "Entregue" else "black"
             html += "<tr>"
-            for i, cell in enumerate(row):
-                if i == 11:  # coluna Status
-                    status = str(cell) if cell else ""
-                    if status == "Pronto":
-                        html += f"<td style='color:green;font-weight:bold'>{status}</td>"
-                    elif status == "Entregue":
-                        html += f"<td style='color:blue;font-weight:bold'>{status}</td>"
-                    else:
-                        html += f"<td>{status}</td>"
-                else:
-                    html += f"<td>{cell}</td>"
+            html += f"<td>{data_hora}</td><td>{bairro}</td><td>{cidade}</td><td>{complemento}</td><td>{pagamento}</td><td>{observacao}</td><td>{itens}</td><td>{adicionais}</td><td>R${float(total):.2f}</td><td style='color:{cor};font-weight:bold'>{status}</td>"
             html += f"""
                 <td>
                     <a href='/pedido/{linha}/status/Pronto'><button class='btn pronto'>Pronto</button></a>
@@ -543,22 +557,12 @@ def pedidos():
                 </td>
             """
             html += "</tr>"
-        linha += 1
+        html += "</table>"
+        html += f"<button class='btn imprimir' onclick=\"imprimirCliente('{cliente_id}')\">Imprimir {cliente}</button>"
+        html += "</div>"
 
-    html += "</table><br><a href='/controle'>Voltar</a>"
-
-    # mostra último pedido do dia
-    if pedidos_do_dia:
-        ultimo = pedidos_do_dia[-1]
-        data_hora = ultimo[0]
-        nome = ultimo[1]
-        total = float(ultimo[10]) if len(ultimo) > 10 and ultimo[10] else 0.0
-        status = ultimo[11] if len(ultimo) > 11 else "Sem status"
-        cor = "green" if status == "Pronto" else "blue" if status == "Entregue" else "black"
-
-        html += "<h2>Último pedido recebido</h2>"
-        html += f"<p>{data_hora} - {nome} - Total R${total:.2f} - <span style='color:{cor};font-weight:bold'>Status: {status}</span></p>"
-
+    html += "<br><a href='/controle'>Voltar</a>"
+    html += "<br><a href='/limpar_pedidos'><button class='btn limpar'>Limpar todos os pedidos</button></a>"
     html += "</body></html>"
 
     return html
@@ -572,6 +576,24 @@ def atualizar_status(linha, novo_status):
     ws.cell(row=linha, column=12, value=novo_status)  # coluna 12 = Status
     wb.save(arquivo)
     return redirect("/pedidos")
+
+
+@app.route("/limpar_pedidos")
+def limpar_pedidos():
+    if "usuario" not in session:
+        return redirect("/login")
+
+    arquivo = "pedidos.xlsx"
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Pedidos"
+    ws.append([
+        "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
+        "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
+    ])
+    wb.save(arquivo)
+    return redirect("/pedidos")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
