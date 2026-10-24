@@ -90,7 +90,7 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
 
     # adiciona cada item do carrinho separadamente
     for d in carrinho:
-        adicionais = ", ".join(d["adicionais"]) if d["adicionais"] else ""
+        adicionais = ", ".join(d["adicionais"]) if d.get("adicionais") else ""
         ws.append([
             data_hora,
             nome,
@@ -107,7 +107,6 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
         ])
 
     wb.save(arquivo)
-
 # carregar planilha
 xls = pd.ExcelFile("static/cardapio.xlsx")
 
