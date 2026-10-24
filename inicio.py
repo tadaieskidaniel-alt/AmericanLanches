@@ -53,6 +53,11 @@ import pandas as pd
 import os
 
 
+from openpyxl import Workbook, load_workbook
+from datetime import datetime
+from zoneinfo import ZoneInfo
+import os
+
 def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, observacao, carrinho, total_final):
     arquivo = "pedidos.xlsx"
 
@@ -63,7 +68,7 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
         ws.title = "Pedidos"
         ws.append([
             "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-            "Pagamento", "Observação", "Itens", "Adicionais", "Total"
+            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
         ])
         wb.save(arquivo)
 
@@ -75,7 +80,7 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
         ws = wb.create_sheet("Pedidos")
         ws.append([
             "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-            "Pagamento", "Observação", "Itens", "Adicionais", "Total"
+            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
         ])
     else:
         ws = wb["Pedidos"]
@@ -88,14 +93,21 @@ def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, o
         adicionais = ", ".join(d["adicionais"]) if d["adicionais"] else ""
         ws.append([
             data_hora,
-            nome, telefone, bairro, cidade, complemento,
-            pagamento, observacao,
+            nome,
+            telefone,
+            bairro,
+            cidade,
+            complemento,
+            pagamento,
+            observacao,
             f"{d['item']} x{d['quantidade']} (Subtotal R${d['subtotal']:.2f})",
             adicionais,
-            total_final
+            total_final,
+            "Recebido"   # status inicial
         ])
 
     wb.save(arquivo)
+
 
 # carregar planilha
 xls = pd.ExcelFile("static/cardapio.xlsx")
@@ -546,7 +558,14 @@ def pedidos():
         html += f"<h2>{cliente}</h2>"
         html += "<table><tr><th>Data/Hora</th><th>Bairro</th><th>Cidade</th><th>Complemento</th><th>Pagamento</th><th>Observação</th><th>Itens</th><th>Adicionais</th><th>Total</th><th>Status</th><th>Ações</th></tr>"
         for linha, pedido in pedidos:
-            data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total, status = pedido
+            if len(pedido) == 12:
+                data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total, status = pedido
+            elif len(pedido) == 11:
+                data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total = pedido
+                status = "Recebido"  # valor padrão para pedidos antigos
+            else:
+                continue
+
             cor = "green" if status == "Pronto" else "blue" if status == "Entregue" else "black"
             html += "<tr>"
             html += f"<td>{data_hora}</td><td>{bairro}</td><td>{cidade}</td><td>{complemento}</td><td>{pagamento}</td><td>{observacao}</td><td>{itens}</td><td>{adicionais}</td><td>R${float(total):.2f}</td><td style='color:{cor};font-weight:bold'>{status}</td>"
@@ -566,6 +585,8 @@ def pedidos():
     html += "</body></html>"
 
     return html
+
+
 
 
 @app.route("/pedido/<int:linha>/status/<novo_status>")
