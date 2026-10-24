@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -58,79 +57,50 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import os
 
-def salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, observacao, carrinho, total_final):
-    arquivo = "pedidos.xlsx"
+def salvar_em_banco(nome, telefone, bairro, cidade, complemento, pagamento, observacao, carrinho, total_final):
+    itens_str = "; ".join(
+        [f"{d['item']} x{d['quantidade']} (Subtotal R${d['subtotal']:.2f})" for d in carrinho]
+    )
+    novo_pedido = Pedido(
+        nome=nome,
+        telefone=telefone,
+        bairro=bairro,
+        cidade=cidade,
+        complemento=complemento,
+        pagamento=pagamento,
+        observacao=observacao,
+        itens=itens_str,
+        total=total_final
+    )
+    db.session.add(novo_pedido)
+    db.session.commit()
 
-    # cria planilha se não existir
-    if not os.path.exists(arquivo):
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "Pedidos"
-        ws.append([
-            "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
-        ])
-        wb.save(arquivo)
 
-    # abre planilha existente
-    wb = load_workbook(arquivo)
-
-    # garante que a aba "Pedidos" exista
-    if "Pedidos" not in wb.sheetnames:
-        ws = wb.create_sheet("Pedidos")
-        ws.append([
-            "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
-        ])
-    else:
-        ws = wb["Pedidos"]
-
-    # pega data/hora de Brasília automaticamente
-    data_hora = datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y %H:%M")
-
-    # adiciona cada item do carrinho separadamente
-    for d in carrinho:
-        adicionais = ", ".join(d["adicionais"]) if d.get("adicionais") else ""
-        ws.append([
-            data_hora,
-            nome,
-            telefone,
-            bairro,
-            cidade,
-            complemento,
-            pagamento,
-            observacao,
-            f"{d['item']} x{d['quantidade']} (Subtotal R${d['subtotal']:.2f})",
-            adicionais,
-            total_final,
-            "Recebido"   # status inicial
-        ])
-
-    wb.save(arquivo)
-# carregar planilha
 xls = pd.ExcelFile("static/cardapio.xlsx")
 
 # Cardápio
 df_cardapio = pd.read_excel(xls, sheet_name="Cardapio")
 df_cardapio.columns = df_cardapio.columns.str.strip().str.lower()
-df_cardapio["preco"] = (
-    df_cardapio["preco"].astype(str)
-    .str.replace("R$", "", regex=False)
-    .str.replace(",", ".", regex=False)
-)
+df_cardapio["preco"] = df_cardapio["preco"].astype(str)
+df_cardapio["preco"] = df_cardapio["preco"].str.replace("R$", "", regex=False)
+df_cardapio["preco"] = df_cardapio["preco"].str.replace(",", ".", regex=False)
 df_cardapio["preco"] = pd.to_numeric(df_cardapio["preco"], errors="coerce").fillna(0).astype(float)
 precos_cardapio = dict(zip(df_cardapio["item"], df_cardapio["preco"]))
 
 # Adicionais
 df_adicionais = pd.read_excel(xls, sheet_name="Adicionais")
 df_adicionais.columns = df_adicionais.columns.str.strip().str.lower()
-df_adicionais["preco"] = (
-    df_adicionais["preco"].astype(str)
-    .str.replace("R$", "", regex=False)
-    .str.replace(",", ".", regex=False)
-)
+df_adicionais["preco"] = df_adicionais["preco"].astype(str)
+df_adicionais["preco"] = df_adicionais["preco"].str.replace("R$", "", regex=False)
+df_adicionais["preco"] = df_adicionais["preco"].str.replace(",", ".", regex=False)
 df_adicionais["preco"] = pd.to_numeric(df_adicionais["preco"], errors="coerce").fillna(0).astype(float)
 precos_adicionais = dict(zip(df_adicionais["adicionais"], df_adicionais["preco"]))
+
+
+
+
+
+
 import unicodedata
 import re
 
@@ -392,9 +362,8 @@ def finalizar():
     numero_whats = "48996598873"
     link = f"https://wa.me/{numero_whats}?text={mensagem_link}"
 
-    # 👉 só salva na planilha DEPOIS do envio
-    # aqui você pode usar um botão de confirmação na página de retorno
-    salvar_em_planilha(nome, telefone, bairro, cidade, complemento, pagamento, observacao, carrinho, total_final)
+    # 👉 agora salva no banco
+    salvar_em_banco(nome, telefone, bairro, cidade, complemento, pagamento, observacao, carrinho, total_final)
 
     return redirect(link)
 
@@ -451,37 +420,20 @@ def pedidos():
     if "usuario" not in session:
         return redirect("/login")
 
-    arquivo = "pedidos.xlsx"
-
-    # cria o arquivo se não existir
-    if not os.path.exists(arquivo):
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "Pedidos"
-        ws.append([
-            "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-            "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
-        ])
-        wb.save(arquivo)
-
-    wb = load_workbook(arquivo)
-    ws = wb["Pedidos"]
-
     hoje = datetime.now().strftime("%d/%m/%Y")  # só mostra pedidos do dia atual
+
+    # busca pedidos do banco
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
 
     # agrupar pedidos por cliente
     pedidos_por_cliente = {}
-    linha = 2
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        data_hora = str(row[0])
+    for p in pedidos:
+        data_hora = p.data.strftime("%d/%m/%Y %H:%M")
         if data_hora.startswith(hoje):
-            nome = row[1]
-            telefone = row[2]
-            chave = f"{nome} ({telefone})"
+            chave = f"{p.nome} ({p.telefone})"
             if chave not in pedidos_por_cliente:
                 pedidos_por_cliente[chave] = []
-            pedidos_por_cliente[chave].append((linha, row))
-        linha += 1
+            pedidos_por_cliente[chave].append(p)
 
     # montar HTML
     html = """
@@ -490,7 +442,7 @@ def pedidos():
     <head>
         <meta charset="UTF-8">
         <title>Pedidos por Cliente</title>
-        <meta http-equiv="refresh" content="5"> <!-- Atualiza sozinho a cada 5s -->
+        <meta http-equiv="refresh" content="5">
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             h1 { margin-bottom: 20px; }
@@ -525,25 +477,11 @@ def pedidos():
         cliente_id = cliente.replace(" ", "_").replace("(", "").replace(")", "")
         html += f"<div id='{cliente_id}'>"
         html += f"<h2>{cliente}</h2>"
-        html += "<table><tr><th>Data/Hora</th><th>Bairro</th><th>Cidade</th><th>Complemento</th><th>Pagamento</th><th>Observação</th><th>Itens</th><th>Adicionais</th><th>Total</th><th>Status</th><th>Ações</th></tr>"
-        for linha, pedido in pedidos:
-            if len(pedido) == 12:
-                data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total, status = pedido
-            elif len(pedido) == 11:
-                data_hora, nome, telefone, bairro, cidade, complemento, pagamento, observacao, itens, adicionais, total = pedido
-                status = "Recebido"  # valor padrão para pedidos antigos
-            else:
-                continue
-
-            cor = "green" if status == "Pronto" else "blue" if status == "Entregue" else "black"
+        html += "<table><tr><th>Data/Hora</th><th>Bairro</th><th>Cidade</th><th>Complemento</th><th>Pagamento</th><th>Observação</th><th>Itens</th><th>Total</th></tr>"
+        for p in pedidos:
+            data_hora = p.data.strftime("%d/%m/%Y %H:%M")
             html += "<tr>"
-            html += f"<td>{data_hora}</td><td>{bairro}</td><td>{cidade}</td><td>{complemento}</td><td>{pagamento}</td><td>{observacao}</td><td>{itens}</td><td>{adicionais}</td><td>R${float(total):.2f}</td><td style='color:{cor};font-weight:bold'>{status}</td>"
-            html += f"""
-                <td>
-                    <a href='/pedido/{linha}/status/Pronto'><button class='btn pronto'>Pronto</button></a>
-                    <a href='/pedido/{linha}/status/Entregue'><button class='btn entregue'>Entregue</button></a>
-                </td>
-            """
+            html += f"<td>{data_hora}</td><td>{p.bairro}</td><td>{p.cidade}</td><td>{p.complemento}</td><td>{p.pagamento}</td><td>{p.observacao}</td><td>{p.itens}</td><td>R${p.total:.2f}</td>"
             html += "</tr>"
         html += "</table>"
         html += f"<button class='btn imprimir' onclick=\"imprimirCliente('{cliente_id}')\">Imprimir {cliente}</button>"
@@ -556,15 +494,12 @@ def pedidos():
     return html
 
 
-
-
-@app.route("/pedido/<int:linha>/status/<novo_status>")
-def atualizar_status(linha, novo_status):
-    arquivo = "pedidos.xlsx"
-    wb = load_workbook(arquivo)
-    ws = wb["Pedidos"]
-    ws.cell(row=linha, column=12, value=novo_status)  # coluna 12 = Status
-    wb.save(arquivo)
+@app.route("/pedido/<int:id>/status/<novo_status>")
+def atualizar_status(id, novo_status):
+    pedido = Pedido.query.get_or_404(id)
+    # se quiser salvar status no banco, adicione um campo "status" no modelo Pedido
+    # pedido.status = novo_status
+    db.session.commit()
     return redirect("/pedidos")
 
 
@@ -573,17 +508,11 @@ def limpar_pedidos():
     if "usuario" not in session:
         return redirect("/login")
 
-    arquivo = "pedidos.xlsx"
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Pedidos"
-    ws.append([
-        "Data/Hora", "Nome", "Telefone", "Bairro", "Cidade", "Complemento",
-        "Pagamento", "Observação", "Itens", "Adicionais", "Total", "Status"
-    ])
-    wb.save(arquivo)
+    Pedido.query.delete()
+    db.session.commit()
     return redirect("/pedidos")
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
